@@ -6,57 +6,13 @@ using namespace std;
 
 #include "myHeader.hpp"
 
+// Tipo estruturado para ter um contador para cada especialidade de médico
 typedef struct especialidade{
   string especialidade;
   int count;
 }ESPECIALIDADE;
 
-void escolhaAtendente(){
-  string command;
-  while (true){
-    cout << "\n[1]Listar médicos\n[2]Listar especialidades disponíveis\n[3]Agendar horário\n[4]Visualizar agendamentos de médico\n[5]Voltar\n";
-    cin >> command;
-    if (command == "1"){
-      lerListaMedicos("medicos.txt");
-    }else if(command == "2"){
-      lerListaEspecialidades("medicos.txt");
-    }else if(command == "3"){
-      agendarHorario("horarios.txt");
-    }else if(command == "4"){
-      verAgendamentos("horarios.txt");
-    }else if(command == "5"){
-      return;
-    }else{
-      cout << "\nargumento \"" << command << "\" inválido\n";
-    }
-  }
-}
-
-void escolhaAdmin(){
-  string command;
-  while (true){
-    cout << "\n[1]Listar médicos\n[2]Listar especialidades disponíveis\n[3]Adicionar médico\n[4]Visualizar agendamentos de médico\n[5]Alterar especialidade de médico\n[6]Excluir médico\n[7]Voltar\n";
-    cin >> command;
-    if (command == "1"){
-      lerListaMedicos("medicos.txt");
-    }else if(command == "2"){
-      lerListaEspecialidades("medicos.txt");
-    }else if(command == "3"){
-      adicionarMedico("medicos.txt");
-    }else if(command == "4"){
-      verAgendamentos("horarios.txt");
-    }else if(command == "5"){
-      alterarEspecialidade("medicos.txt");
-    }else if(command == "6"){
-      excluirMedico("medicos.txt");
-    }else if(command == "7"){
-      return;
-    }else{
-      cout << "\nargumento \"" << command << "\" inválido\n";
-    }
-  }
-}
-
+// Adiciona uma string linhaEscrita ao fim de um arquivo de nome arquivoNome
 void appendArquivo(string linhaEscrita, string arquivoNome){
   fstream arquivo;
   linhaEscrita += "\n";
@@ -65,6 +21,7 @@ void appendArquivo(string linhaEscrita, string arquivoNome){
   arquivo.close();
 }
 
+// Imprime a lista de médicos e suas especialidades guardadas num arquivo .txt de nome arquivoNome
 void lerListaMedicos(string arquivoNome){
   string medico, especialidade;
   fstream arquivo;
@@ -78,6 +35,7 @@ void lerListaMedicos(string arquivoNome){
   cout << endl;
 }
 
+// Imprime a lista de especialidades e quantidade de cada especialidade guardada num arquivo .txt de nome arquivoNome
 void lerListaEspecialidades(string arquivoNome){
   fstream arquivo;
   vector<ESPECIALIDADE> especialidades;
@@ -85,6 +43,7 @@ void lerListaEspecialidades(string arquivoNome){
 
   arquivo.open(arquivoNome, ios::in);
 
+  // Passa as especialiades gurdadas no arquivo .txt de nome arquivoNome para um vector de tipo ESPECIALIDADE, e armazena quantas tem de cada tipo especialidades[].especialidade num contador especialidades[].count
   while (getline(arquivo, linhaLeitura)){
     getline(arquivo, linhaLeitura);
     int check = 1;
@@ -101,12 +60,14 @@ void lerListaEspecialidades(string arquivoNome){
     }
   }
 
+  // Imprime as especialidades
   for(int i = 0; i < especialidades.size(); i++){
     cout << "\nEspecialidade - " << especialidades[i].especialidade << " - (quant: " << especialidades[i].count << ")";
   }
   cout << endl;
 }
 
+// Insere num arquivo .txt de nome arquivoNome um novo agendamento de um médico já cadastrado
 void agendarHorario(string arquivoNome){
   string horario;
   fstream arquivoMedicos, arquivoHorarios;
@@ -120,6 +81,7 @@ void agendarHorario(string arquivoNome){
     cin.ignore();
     getline(cin, medico);
 
+    // Procura o médico nos cadastros de médico
     while(getline(arquivoMedicos, linhaLeitura)){
       if (medico == linhaLeitura){
         arquivoMedicos.close();
@@ -159,6 +121,7 @@ void agendarHorario(string arquivoNome){
   appendArquivo(horario , "horarios.txt");
 }
 
+// Função que pesquisa os agendamentos salvos num arquivo .txt de nome arquivoNome do médico desejado e os imprime
 void verAgendamentos(string arquivoNome){
   string medico, horario;
   fstream arquivo;
@@ -173,6 +136,7 @@ void verAgendamentos(string arquivoNome){
     cin.ignore();
     getline(cin, medico);
 
+    // Procura os agendamentos do médico especificado, caso tenha, imprime os agendamentos
     while(getline(arquivo, linhaLeitura)){
       if (medico == linhaLeitura){
         check = 1;
@@ -200,6 +164,7 @@ void verAgendamentos(string arquivoNome){
   }
 }
 
+// Adiciona um médico e sua especialidade a um arquivo de .txt de nome ArquivoNome
 void adicionarMedico(string arquivoNome){
   string medico;
   string especialidade;
@@ -215,10 +180,176 @@ void adicionarMedico(string arquivoNome){
   appendArquivo(especialidade, arquivoNome);
 }
 
+// Altera a especialidade de um médico guardado num arquivo .txt de nome arquivoNome
 void alterarEspecialidade(string arquivoNome){
+  string medico, especialidade;
+  fstream arquivo;
+  string linhaLeitura;
+  int check = 0;
 
+  while (true){
+    check = 0;
+    arquivo.open(arquivoNome, ios::in | ios::out);
+    cout << "\nDigite o médico que você quer alterar a especialidade: ";
+    cin.ignore();
+    getline(cin, medico);
+
+    // Verifica se o médico está cadastrado
+    while(getline(arquivo, linhaLeitura)){
+      // Caso exista, altera sua especialidade
+      if (medico == linhaLeitura){
+        check = 1;
+
+        cout << "\nAtualize a especialidade do médico: ";
+        getline(cin, especialidade);
+
+        string arquivoTempNome = "medicosTemp.txt";
+        fstream arquivoTemp;
+        
+        arquivo.close();
+
+        arquivo.open(arquivoNome, ios::in | ios::out);
+
+        // Usa arquivo temporário para se receber a lista de medicos com a espcialidade atualizada
+        while (getline(arquivo, linhaLeitura)){
+          appendArquivo(linhaLeitura, arquivoTempNome);
+          if (medico == linhaLeitura){
+            getline(arquivo, linhaLeitura);
+            appendArquivo(especialidade, arquivoTempNome);
+          }
+        }
+        rename(arquivoTempNome.c_str(), "temp.txt");
+        rename("medicos.txt", arquivoTempNome.c_str());
+        rename("temp.txt", "medicos.txt");
+        arquivoTemp.open(arquivoTempNome, ios::out | ios::trunc);
+        arquivoTemp.close();
+
+        return;
+      }
+    }
+    
+    if (check == 0){
+      cout << "\nMedico não existente no sistema\n";
+      arquivo.close();
+    }
+
+    while (true){
+      int command;
+      cout << "\n[1]Continuar\n[2]Voltar\n";
+      cin >> command;
+      if(command == 1){
+        break;
+      }else if (command == 2){
+        return;
+      }else{
+        cout << "\nargumento \"" << command << "\" inválido\n";
+      }
+    }
+  }
 }
 
+// Exclui cadastro do médico desejado do arquivo de arquivoNome
 void excluirMedico(string arquivoNome){
+  string medico;
+  fstream arquivo;
+  string linhaLeitura;
+  int check = 0;
 
+  while (true){
+    check = 0;
+    arquivo.open(arquivoNome, ios::in | ios::out);
+    cout << "\nDigite o médico que você quer excluir: ";
+    cin.ignore();
+    getline(cin, medico);
+
+    while(getline(arquivo, linhaLeitura)){
+      if (medico == linhaLeitura){
+        check = 1;
+
+        string arquivoTempNome = "medicosTemp.txt";
+        fstream arquivoTemp;
+
+        arquivo.close();
+
+        arquivo.open(arquivoNome, ios::in | ios::out);
+
+        // Usa arquivo temporário para se receber a lista de medicos atualizada
+        while (getline(arquivo, linhaLeitura)){
+          // Verifica se o médico está cadastrado
+          if (medico == linhaLeitura){
+            getline(arquivo, linhaLeitura);
+            getline(arquivo, linhaLeitura);
+            appendArquivo(linhaLeitura, arquivoTempNome);
+            getline(arquivo, linhaLeitura);
+
+            // Tratamento caso médico esteja salvo na ultima linha do .txt
+            if (linhaLeitura == ""){
+              removeLastLine(arquivoTempNome);
+            }else{
+              appendArquivo(linhaLeitura, arquivoTempNome);
+            }
+          }else{
+            appendArquivo(linhaLeitura, arquivoTempNome);
+          }
+        }
+        arquivo.close();
+
+        rename(arquivoTempNome.c_str(), "temp.txt");
+        rename("medicos.txt", arquivoTempNome.c_str());
+        rename("temp.txt", "medicos.txt");
+        arquivoTemp.open(arquivoTempNome, ios::out | ios::trunc);
+        arquivoTemp.close();
+
+        return;
+      }
+    }
+    
+    if (check == 0){
+      cout << "\nMedico não existente no sistema\n";
+      arquivo.close();
+    }
+
+    while (true){
+      int command;
+      cout << "\n[1]Continuar\n[2]Voltar\n";
+      cin >> command;
+      if(command == 1){
+        break;
+      }else if (command == 2){
+        return;
+      }else{
+        cout << "\nargumento \"" << command << "\" inválido\n";
+      }
+    }
+  }
+}
+
+// Função que remove a última linha de um arquivo .txt de nome arquivoNome
+void removeLastLine(string arquivoNome) {
+
+    ifstream arquivoIn(arquivoNome);
+
+    string arquivoNomeTemp = arquivoNome + ".tmp";
+    ofstream arquivoOut(arquivoNomeTemp);
+
+    string linhaLeitura;
+    string linhaAnterior;
+
+    while (getline(arquivoIn, linhaLeitura)) {
+      if (!linhaAnterior.empty()) {
+        arquivoOut << linhaAnterior << '\n';
+      }
+      linhaAnterior = linhaLeitura;
+    }
+
+    arquivoIn.close();
+
+    if (!linhaAnterior.empty()) {
+      arquivoOut << linhaAnterior;
+    }
+
+    arquivoOut.close();
+
+    remove(arquivoNome.c_str());
+    rename(arquivoNomeTemp.c_str(), arquivoNome.c_str());
 }
