@@ -14,10 +14,10 @@ int main(){
     }else if(command == 2){
       escolhaAdmin();
     }else if(command == 3){
-      cout << "\nPrograma encerrado\n";
+      cout << "\nPrograma encerrado\n\n";
       return 0;
     }else{
-      cout << "argumento \"" << command << "\" inválido";
+      cout << "\nargumento \"" << command << "\" inválido\n";
     }
   }
 }

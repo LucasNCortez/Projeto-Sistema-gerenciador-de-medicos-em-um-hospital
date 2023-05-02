@@ -27,7 +27,7 @@ void escolhaAtendente(){
     }else if(command == "5"){
       return;
     }else{
-      cout << "argumento \"" << command << "\" inválido";
+      cout << "\nargumento \"" << command << "\" inválido\n";
     }
   }
 }
@@ -52,7 +52,7 @@ void escolhaAdmin(){
     }else if(command == "7"){
       return;
     }else{
-      cout << "argumento \"" << command << "\" inválido";
+      cout << "\nargumento \"" << command << "\" inválido\n";
     }
   }
 }
@@ -101,8 +101,6 @@ void lerListaEspecialidades(string arquivoNome){
     }
   }
 
-  cout << "\nEspecialidades:\n";
-
   for(int i = 0; i < especialidades.size(); i++){
     cout << "\nEspecialidade - " << especialidades[i].especialidade << " - (quant: " << especialidades[i].count << ")";
   }
@@ -129,11 +127,24 @@ void agendarHorario(string arquivoNome){
         check = 1;
         break;
       }
-      getline(arquivoMedicos, linhaLeitura);
     }
-    arquivoMedicos.close();
+    
     if (check != 1){
       cout << "\nMedico não existente no sistema.\n";
+      arquivoMedicos.close();
+      
+      while (true){
+        int command;
+        cout << "\n[1]Continuar\n[2]Voltar\n";
+        cin >> command;
+        if(command == 1){
+          break;
+        }else if (command == 2){
+          return;
+        }else{
+          cout << "\nargumento \"" << command << "\" inválido\n";
+        }
+      }
     }else{
       break;
     }
@@ -174,12 +185,17 @@ void verAgendamentos(string arquivoNome){
     if (check == 0){
       cout << "\nMedico não existente no sistema ou não possui consultas agendadas.\n";
     }
-
-    int command;
-    cout << "\n[1]Continuar\n[2]Voltar\n";
-    cin >> command;
-    if (command == 2){
-      break;
+    while (true){
+      int command;
+      cout << "\n[1]Continuar\n[2]Voltar\n";
+      cin >> command;
+      if(command == 1){
+        break;
+      }else if (command == 2){
+        return;
+      }else{
+        cout << "\nargumento \"" << command << "\" inválido\n";
+      }
     }
   }
 }
